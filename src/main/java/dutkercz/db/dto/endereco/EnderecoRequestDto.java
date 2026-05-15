@@ -1,4 +1,4 @@
-package dutkercz.db.dto;
+package dutkercz.db.dto.endereco;
 
 public record EnderecoRequestDto(String rua,
                                  String numero,
