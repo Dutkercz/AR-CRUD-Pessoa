@@ -7,11 +7,13 @@ import dutkercz.db.dto.pessoa.PessoaRequestDto;
 import dutkercz.db.dto.pessoa.PessoaResponseDto;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface PessoaMapper {
 
+    @Mapping(target = "cpf", expression = "java(requestDto.cpf().replaceAll(\"[.-]\", \"\"))")
     Pessoa toEntity(PessoaRequestDto requestDto);
 
     @AfterMapping
