@@ -6,6 +6,8 @@ import dutkercz.db.dto.pessoa.PessoaResponseDto;
 import dutkercz.db.mapper.PessoaMapper;
 import dutkercz.db.repository.PessoaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,5 +22,10 @@ public class PessoaService {
     public PessoaResponseDto cadastrarPessoa(PessoaRequestDto requestDto){
         Pessoa pessoa = pessoaRepository.save(pessoaMapper.toEntity(requestDto));
         return pessoaMapper.toDto(pessoa);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PessoaResponseDto> listarPessoas(Pageable pageable) {
+        return pessoaRepository.findAll(pageable).map(pessoaMapper::toDto);
     }
 }

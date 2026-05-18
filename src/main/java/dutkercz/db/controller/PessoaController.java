@@ -5,11 +5,10 @@ import dutkercz.db.dto.pessoa.PessoaResponseDto;
 import dutkercz.db.service.PessoaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -27,5 +26,10 @@ public class PessoaController {
         PessoaResponseDto responseDto = pessoaService.cadastrarPessoa(requestDto);
         URI uri = builder.path("/api/pessoas/{id}").buildAndExpand(responseDto.id()).toUri();
         return ResponseEntity.created(uri).body(responseDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<PessoaResponseDto>> listarPessoas(Pageable pageable){
+        return ResponseEntity.ok().body(pessoaService.listarPessoas(pageable));
     }
 }
