@@ -5,6 +5,7 @@ import dutkercz.db.dto.pessoa.PessoaRequestDto;
 import dutkercz.db.dto.pessoa.PessoaResponseDto;
 import dutkercz.db.mapper.PessoaMapper;
 import dutkercz.db.repository.PessoaRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,5 +28,13 @@ public class PessoaService {
     @Transactional(readOnly = true)
     public Page<PessoaResponseDto> listarPessoas(Pageable pageable) {
         return pessoaRepository.findAll(pageable).map(pessoaMapper::toDto);
+    }
+
+    @Transactional
+    public void deletarPessoa(Long id) {
+        Pessoa pessoa = pessoaRepository.findById(id)
+            .orElseThrow(() ->
+                                 new EntityNotFoundException("Pessoa com o id " + id + " não encontrada"));
+        pessoaRepository.delete(pessoa);
     }
 }

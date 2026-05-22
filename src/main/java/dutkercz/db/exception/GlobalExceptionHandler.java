@@ -1,6 +1,8 @@
 package dutkercz.db.exception;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -26,12 +28,15 @@ public class GlobalExceptionHandler {
     ///Apenas o campo CPF foi marcado com UNIQUE
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> handleDataIntegrityViolation(DataIntegrityViolationException e) {
-        String message;
-        if (e.getMostSpecificCause().getMessage().contains("cpf")) {
-            message = "O cpf informado já possui cadastro";
-        }else {
-            message = "Erro inesperado";
-        }
+        String message = e.getMostSpecificCause().getMessage().contains("cpf") ?
+                         "O cpf informado já possui cadastro"
+                         :
+                         "Erro inesperado";
         return ResponseEntity.badRequest().body(Map.of("message: ", message));
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<?> handleEntityNotFound(EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message: ", e.getMessage()));
     }
 }

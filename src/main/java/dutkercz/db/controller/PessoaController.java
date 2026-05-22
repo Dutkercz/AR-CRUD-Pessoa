@@ -32,4 +32,10 @@ public class PessoaController {
     public ResponseEntity<Page<PessoaResponseDto>> listarPessoas(Pageable pageable){
         return ResponseEntity.ok().body(pessoaService.listarPessoas(pageable));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarPessoa(@PathVariable Long id){
+        pessoaService.deletarPessoa(id);
+        return ResponseEntity.noContent().build();
+    }
 }
