@@ -4,6 +4,8 @@ import dutkercz.db.dto.endereco.EnderecoResponseDto;
 import dutkercz.db.dto.endereco.EnderecoUpdateDto;
 import dutkercz.db.service.EnderecoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +21,11 @@ public class EnderecoController {
                                                                  @PathVariable Long enderecoId,
                                                                  @RequestBody EnderecoUpdateDto enderecoUpdateDto){
         return ResponseEntity.ok(enderecoService
-                                         .updateEnderecoById(pessoaId, enderecoId, enderecoUpdateDto));
+                                         .updateEnderecoPorId(pessoaId, enderecoId, enderecoUpdateDto));
+    }
 
+    @GetMapping
+    public ResponseEntity<Page<EnderecoResponseDto>> listarEnderecosDePessoa(@PathVariable Long pessoaId, Pageable pageable){
+        return ResponseEntity.ok(enderecoService.listarPorPessoa(pessoaId, pageable));
     }
 }

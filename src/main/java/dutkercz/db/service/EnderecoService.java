@@ -5,23 +5,36 @@ import dutkercz.db.dto.endereco.EnderecoResponseDto;
 import dutkercz.db.dto.endereco.EnderecoUpdateDto;
 import dutkercz.db.mapper.Mapper;
 import dutkercz.db.repository.EnderecoRepository;
+import dutkercz.db.repository.PessoaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class EnderecoService {
 
     private final EnderecoRepository enderecoRepository;
+    private final PessoaRepository pessoaRepository;
     private final Mapper mapper;
 
-    public EnderecoResponseDto updateEnderecoById(Long pessoaId,
-                                                  Long enderecoId,
-                                                  EnderecoUpdateDto enderecoRequestDto){
+    @Transactional
+    public EnderecoResponseDto updateEnderecoPorId(Long pessoaId,
+                                                   Long enderecoId,
+                                                   EnderecoUpdateDto enderecoRequestDto){
         Endereco endereco = enderecoRepository.findByIdAndPessoaId(enderecoId, pessoaId)
                 .orElseThrow(() -> new EntityNotFoundException("Erro ao buscar endereço"));
         endereco = enderecoRepository.save(mapper.updateEnderecoFromDto(enderecoRequestDto, endereco));
         return mapper.toDto(endereco);
+    }
+
+    public Page<EnderecoResponseDto> listarPorPessoa(Long pessoaId, Pageable pageable) {
+        pessoaRepository.findById(pessoaId).orElseThrow(() ->
+                                    new EntityNotFoundException("Pessoa com o id " + pessoaId + " não encontrada"));
+        Page<Endereco> enderecos = enderecoRepository.findAllByPessoaId(pessoaId, pageable);
+        return enderecos.map(mapper::toDto);
     }
 }
