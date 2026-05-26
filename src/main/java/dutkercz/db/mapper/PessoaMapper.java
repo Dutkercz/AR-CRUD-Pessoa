@@ -2,9 +2,10 @@ package dutkercz.db.mapper;
 
 import dutkercz.db.domain.Endereco;
 import dutkercz.db.domain.Pessoa;
-import dutkercz.db.dto.endereco.EnderecoDto;
+import dutkercz.db.dto.endereco.EnderecoRequestDto;
 import dutkercz.db.dto.pessoa.PessoaRequestDto;
 import dutkercz.db.dto.pessoa.PessoaResponseDto;
+import dutkercz.db.dto.pessoa.PessoaUpdateDto;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -25,9 +26,11 @@ public interface PessoaMapper {
         }
     }
 
+    Pessoa updatePessoaFromDto(PessoaUpdateDto updateDto, @MappingTarget Pessoa pessoa);
+
     PessoaResponseDto toDto(Pessoa pessoa);
 
     ///Utilitario para mapeamento da entidade de composição
-    Endereco toEntity(EnderecoDto requestDto);
-    EnderecoDto toDto(Endereco endereco);
+    Endereco toEntity(EnderecoRequestDto requestDto);
+    EnderecoRequestDto toDto(Endereco endereco);
 }

@@ -2,6 +2,7 @@ package dutkercz.db.controller;
 
 import dutkercz.db.dto.pessoa.PessoaRequestDto;
 import dutkercz.db.dto.pessoa.PessoaResponseDto;
+import dutkercz.db.dto.pessoa.PessoaUpdateDto;
 import dutkercz.db.service.PessoaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,12 @@ public class PessoaController {
     @GetMapping
     public ResponseEntity<Page<PessoaResponseDto>> listarPessoas(Pageable pageable){
         return ResponseEntity.ok().body(pessoaService.listarPessoas(pageable));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<PessoaResponseDto> atualizarPessoa(@PathVariable Long id,
+                                                             @RequestBody @Valid PessoaUpdateDto updateDto){
+        return ResponseEntity.ok(pessoaService.atulizarNomePessoa(id, updateDto));
     }
 
     @DeleteMapping("/{id}")
