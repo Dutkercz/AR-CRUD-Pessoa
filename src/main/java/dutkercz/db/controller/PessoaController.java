@@ -1,5 +1,6 @@
 package dutkercz.db.controller;
 
+import dutkercz.db.dto.pessoa.PessoaIdadeResponseDto;
 import dutkercz.db.dto.pessoa.PessoaRequestDto;
 import dutkercz.db.dto.pessoa.PessoaResponseDto;
 import dutkercz.db.dto.pessoa.PessoaUpdateDto;
@@ -44,5 +45,10 @@ public class PessoaController {
     public ResponseEntity<Void> deletarPessoa(@PathVariable Long id){
         pessoaService.deletarPessoa(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/minha-idade")
+    public ResponseEntity<PessoaIdadeResponseDto> mostrarMinhaIdade(@PathVariable Long id){
+        return ResponseEntity.ok(pessoaService.mostrarMinhaIdade(id));
     }
 }
