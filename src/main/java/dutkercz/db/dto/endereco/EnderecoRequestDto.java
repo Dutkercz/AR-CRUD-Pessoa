@@ -3,7 +3,7 @@ package dutkercz.db.dto.endereco;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-public record EnderecoDto(
+public record EnderecoRequestDto(
         @NotBlank(message = "O campo rua não pode estar em branco")
         String rua,
         @NotBlank(message = "O campo número não pode estar em branco")
