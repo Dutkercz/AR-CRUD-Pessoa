@@ -4,7 +4,7 @@ import dutkercz.db.domain.Pessoa;
 import dutkercz.db.dto.pessoa.PessoaRequestDto;
 import dutkercz.db.dto.pessoa.PessoaResponseDto;
 import dutkercz.db.dto.pessoa.PessoaUpdateDto;
-import dutkercz.db.mapper.PessoaMapper;
+import dutkercz.db.mapper.Mapper;
 import dutkercz.db.repository.PessoaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -19,17 +19,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class PessoaService {
 
     private final PessoaRepository pessoaRepository;
-    private final PessoaMapper pessoaMapper;
+    private final Mapper mapper;
 
     @Transactional
     public PessoaResponseDto cadastrarPessoa(PessoaRequestDto requestDto){
-        Pessoa pessoa = pessoaRepository.save(pessoaMapper.toEntity(requestDto));
-        return pessoaMapper.toDto(pessoa);
+        Pessoa pessoa = pessoaRepository.save(mapper.toEntity(requestDto));
+        return mapper.toDto(pessoa);
     }
 
     @Transactional(readOnly = true)
     public Page<PessoaResponseDto> listarPessoas(Pageable pageable) {
-        return pessoaRepository.findAll(pageable).map(pessoaMapper::toDto);
+        return pessoaRepository.findAll(pageable).map(mapper::toDto);
     }
 
     @Transactional
@@ -45,8 +45,8 @@ public class PessoaService {
         Pessoa pessoa =pessoaRepository.findById(id)
             .orElseThrow(() ->
                                  new EntityNotFoundException("Pessoa com o id " + id + " não encontrada"));
-        pessoa = pessoaMapper.updatePessoaFromDto(updateDto, pessoa);
+        pessoa = mapper.updatePessoaFromDto(updateDto, pessoa);
         pessoaRepository.save(pessoa);
-        return pessoaMapper.toDto(pessoa);
+        return mapper.toDto(pessoa);
     }
 }

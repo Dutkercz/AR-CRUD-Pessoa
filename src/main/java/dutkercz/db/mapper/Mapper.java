@@ -3,16 +3,17 @@ package dutkercz.db.mapper;
 import dutkercz.db.domain.Endereco;
 import dutkercz.db.domain.Pessoa;
 import dutkercz.db.dto.endereco.EnderecoRequestDto;
+import dutkercz.db.dto.endereco.EnderecoResponseDto;
+import dutkercz.db.dto.endereco.EnderecoUpdateDto;
 import dutkercz.db.dto.pessoa.PessoaRequestDto;
 import dutkercz.db.dto.pessoa.PessoaResponseDto;
 import dutkercz.db.dto.pessoa.PessoaUpdateDto;
 import org.mapstruct.AfterMapping;
-import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
-public interface PessoaMapper {
+@org.mapstruct.Mapper(componentModel = "spring")
+public interface Mapper {
 
     @Mapping(target = "cpf", expression = "java(requestDto.cpf().replaceAll(\"[.-]\", \"\"))")
     Pessoa toEntity(PessoaRequestDto requestDto);
@@ -32,5 +33,6 @@ public interface PessoaMapper {
 
     ///Utilitario para mapeamento da entidade de composição
     Endereco toEntity(EnderecoRequestDto requestDto);
-    EnderecoRequestDto toDto(Endereco endereco);
+    EnderecoResponseDto toDto(Endereco endereco);
+    Endereco updateEnderecoFromDto(EnderecoUpdateDto enderecoUpdateDto, @MappingTarget Endereco endereco);
 }
