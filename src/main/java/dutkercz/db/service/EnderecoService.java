@@ -1,6 +1,8 @@
 package dutkercz.db.service;
 
 import dutkercz.db.domain.Endereco;
+import dutkercz.db.domain.Pessoa;
+import dutkercz.db.dto.endereco.EnderecoRequestDto;
 import dutkercz.db.dto.endereco.EnderecoResponseDto;
 import dutkercz.db.dto.endereco.EnderecoUpdateDto;
 import dutkercz.db.mapper.Mapper;
@@ -46,5 +48,13 @@ public class EnderecoService {
 
         novoPrincipal.setPrincipal(true);
         return mapper.toDto(novoPrincipal);
+    }
+
+    @Transactional
+    public EnderecoResponseDto adicionarEndereco(Long pessoaId, EnderecoRequestDto enderecoRequestDto) {
+        Pessoa pessoa = pessoaService.buscarPorId(pessoaId);
+        var endereco = mapper.toEntity(enderecoRequestDto);
+        endereco.setPessoa(pessoa);
+        return  mapper.toDto(enderecoRepository.save(endereco));
     }
 }

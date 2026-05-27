@@ -41,32 +41,28 @@ public class PessoaService {
 
     @Transactional
     public void deletarPessoa(Long id) {
-        Pessoa pessoa = pessoaRepository.findById(id)
-            .orElseThrow(() ->
-                                 new EntityNotFoundException("Pessoa com o id " + id + " não encontrada"));
+        Pessoa pessoa = buscarPorId(id);
         pessoaRepository.delete(pessoa);
     }
 
     @Transactional
     public PessoaResponseDto atulizarNomePessoa(Long id, @Valid PessoaUpdateDto updateDto) {
-        Pessoa pessoa =pessoaRepository.findById(id)
-            .orElseThrow(() ->
-                                 new EntityNotFoundException("Pessoa com o id " + id + " não encontrada"));
+        Pessoa pessoa = buscarPorId(id);
         mapper.updatePessoaFromDto(updateDto, pessoa);
         return mapper.toDto(pessoa);
     }
 
     public PessoaIdadeResponseDto mostrarMinhaIdade(Long id) {
-        Pessoa pessoa = pessoaRepository.findById(id)
-                   .orElseThrow(() ->
-                                        new EntityNotFoundException("Pessoa com o id " + id + " não encontrada"));
+        Pessoa pessoa = buscarPorId(id);
         LocalDate hoje = LocalDate.now();
         LocalDate nascimento = pessoa.getDataNascimento();
         int idade = Period.between(nascimento, hoje).getYears();
         return new PessoaIdadeResponseDto(pessoa.getNome(), idade);
     }
 
-    public void buscarPorId(Long pessoaId) {
-        pessoaRepository.existsById(pessoaId);
+    public Pessoa buscarPorId(Long pessoaId) {
+       return pessoaRepository.findById(pessoaId)
+                  .orElseThrow(() ->
+                                   new EntityNotFoundException("Pessoa com o id " + pessoaId + " não encontrada"));
     }
 }
