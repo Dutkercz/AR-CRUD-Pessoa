@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.Period;
 
+import static dutkercz.db.service.validations.ValidarEnderecoPrincipalUnico.validarEnderecoPrincipalUnico;
+
 @Service
 @RequiredArgsConstructor
 public class PessoaService {
@@ -27,6 +29,7 @@ public class PessoaService {
 
     @Transactional
     public PessoaResponseDto cadastrarPessoa(PessoaRequestDto requestDto){
+        validarEnderecoPrincipalUnico(requestDto.enderecos());
         Pessoa pessoa = pessoaRepository.save(mapper.toEntity(requestDto));
         return mapper.toDto(pessoa);
     }
@@ -62,5 +65,9 @@ public class PessoaService {
         LocalDate nascimento = pessoa.getDataNascimento();
         int idade = Period.between(nascimento, hoje).getYears();
         return new PessoaIdadeResponseDto(pessoa.getNome(), idade);
+    }
+
+    public void buscarPorId(Long pessoaId) {
+        pessoaRepository.existsById(pessoaId);
     }
 }

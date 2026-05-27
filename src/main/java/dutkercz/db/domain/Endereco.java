@@ -21,6 +21,9 @@ public class Endereco {
     private String estado;
     private String cep;
 
+    @Column(nullable = false)
+    private boolean principal;
+
     @ManyToOne
     private Pessoa pessoa;
 }

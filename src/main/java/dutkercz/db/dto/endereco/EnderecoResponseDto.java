@@ -7,5 +7,7 @@ public record EnderecoResponseDto(
         String bairro,
         String cidade,
         String estado,
-        String cep) {
+        String cep,
+        boolean principal
+) {
 }
