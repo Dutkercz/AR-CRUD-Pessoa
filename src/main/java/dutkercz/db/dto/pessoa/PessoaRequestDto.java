@@ -2,6 +2,7 @@ package dutkercz.db.dto.pessoa;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import dutkercz.db.dto.endereco.EnderecoRequestDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,6 +20,7 @@ public record PessoaRequestDto(
         String nome,
 
         @NotNull
+        @Schema(pattern = "dd/MM/yyyy", example = "10/08/1992")
         @JsonFormat(pattern = "dd/MM/yyyy")
         LocalDate dataNascimento,
 

@@ -4,6 +4,7 @@ import dutkercz.db.dto.endereco.EnderecoResponseDto;
 import dutkercz.db.dto.endereco.EnderecoUpdateDto;
 import dutkercz.db.service.EnderecoService;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,8 @@ public class EnderecoController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<EnderecoResponseDto>> listarEnderecosDePessoa(@PathVariable Long pessoaId, Pageable pageable){
+    public ResponseEntity<Page<EnderecoResponseDto>> listarEnderecosDePessoa(@PathVariable Long pessoaId,
+                                                                             @ParameterObject Pageable pageable){
         return ResponseEntity.ok(enderecoService.listarPorPessoa(pessoaId, pageable));
     }
 }

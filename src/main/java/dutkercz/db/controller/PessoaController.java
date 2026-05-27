@@ -1,5 +1,6 @@
 package dutkercz.db.controller;
 
+import dutkercz.db.controller.documentacao.PessoaControllerInterface;
 import dutkercz.db.dto.pessoa.PessoaIdadeResponseDto;
 import dutkercz.db.dto.pessoa.PessoaRequestDto;
 import dutkercz.db.dto.pessoa.PessoaResponseDto;
@@ -7,10 +8,14 @@ import dutkercz.db.dto.pessoa.PessoaUpdateDto;
 import dutkercz.db.service.PessoaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -18,11 +23,11 @@ import java.net.URI;
 @RestController
 @RequestMapping("/api/pessoas")
 @RequiredArgsConstructor
-public class PessoaController {
+public class PessoaController implements PessoaControllerInterface {
 
     private final PessoaService pessoaService;
 
-    @PostMapping
+    @Override
     public ResponseEntity<PessoaResponseDto> cadastrarPessoa(@RequestBody @Valid PessoaRequestDto requestDto,
                                                              UriComponentsBuilder builder){
         PessoaResponseDto responseDto = pessoaService.cadastrarPessoa(requestDto);
@@ -30,24 +35,24 @@ public class PessoaController {
         return ResponseEntity.created(uri).body(responseDto);
     }
 
-    @GetMapping
-    public ResponseEntity<Page<PessoaResponseDto>> listarPessoas(Pageable pageable){
+    @Override
+    public ResponseEntity<Page<PessoaResponseDto>> listarPessoas(@ParameterObject Pageable pageable){
         return ResponseEntity.ok().body(pessoaService.listarPessoas(pageable));
     }
 
-    @PatchMapping("/{id}")
+    @Override
     public ResponseEntity<PessoaResponseDto> atualizarPessoa(@PathVariable Long id,
                                                              @RequestBody @Valid PessoaUpdateDto updateDto){
         return ResponseEntity.ok(pessoaService.atulizarNomePessoa(id, updateDto));
     }
 
-    @DeleteMapping("/{id}")
+    @Override
     public ResponseEntity<Void> deletarPessoa(@PathVariable Long id){
         pessoaService.deletarPessoa(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}/minha-idade")
+    @Override
     public ResponseEntity<PessoaIdadeResponseDto> mostrarMinhaIdade(@PathVariable Long id){
         return ResponseEntity.ok(pessoaService.mostrarMinhaIdade(id));
     }
