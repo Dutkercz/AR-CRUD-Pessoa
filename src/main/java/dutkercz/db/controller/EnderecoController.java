@@ -24,6 +24,12 @@ public class EnderecoController {
                                          .updateEnderecoPorId(pessoaId, enderecoId, enderecoUpdateDto));
     }
 
+    @PostMapping("/mudar-principal/{enderecoId}")
+    public ResponseEntity<EnderecoResponseDto> mudarEnderecoPrincipal(@PathVariable Long pessoaId,
+                                                                      @PathVariable Long enderecoId){
+        return ResponseEntity.ok(enderecoService.mudarEnderecoPrincipal(pessoaId, enderecoId));
+    }
+
     @GetMapping
     public ResponseEntity<Page<EnderecoResponseDto>> listarEnderecosDePessoa(@PathVariable Long pessoaId, Pageable pageable){
         return ResponseEntity.ok(enderecoService.listarPorPessoa(pessoaId, pageable));

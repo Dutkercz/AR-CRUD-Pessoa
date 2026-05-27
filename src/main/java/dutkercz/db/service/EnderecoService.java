@@ -5,7 +5,6 @@ import dutkercz.db.dto.endereco.EnderecoResponseDto;
 import dutkercz.db.dto.endereco.EnderecoUpdateDto;
 import dutkercz.db.mapper.Mapper;
 import dutkercz.db.repository.EnderecoRepository;
-import dutkercz.db.repository.PessoaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class EnderecoService {
 
     private final EnderecoRepository enderecoRepository;
-    private final PessoaRepository pessoaRepository;
+    private final PessoaService pessoaService;
     private final Mapper mapper;
 
     @Transactional
@@ -27,14 +26,25 @@ public class EnderecoService {
                                                    EnderecoUpdateDto enderecoRequestDto){
         Endereco endereco = enderecoRepository.findByIdAndPessoaId(enderecoId, pessoaId)
                 .orElseThrow(() -> new EntityNotFoundException("Erro ao buscar endereço"));
-        endereco = enderecoRepository.save(mapper.updateEnderecoFromDto(enderecoRequestDto, endereco));
+        mapper.updateEnderecoFromDto(enderecoRequestDto, endereco);
         return mapper.toDto(endereco);
     }
 
     public Page<EnderecoResponseDto> listarPorPessoa(Long pessoaId, Pageable pageable) {
-        pessoaRepository.findById(pessoaId).orElseThrow(() ->
-                                    new EntityNotFoundException("Pessoa com o id " + pessoaId + " não encontrada"));
+        pessoaService.buscarPorId(pessoaId);
         Page<Endereco> enderecos = enderecoRepository.findAllByPessoaId(pessoaId, pageable);
         return enderecos.map(mapper::toDto);
+    }
+
+    @Transactional
+    public EnderecoResponseDto mudarEnderecoPrincipal(Long pessoaId, Long enderecoId) {
+
+        Endereco novoPrincipal = enderecoRepository.findByIdAndPessoaId(enderecoId, pessoaId)
+                   .orElseThrow(() -> new EntityNotFoundException("Erro ao buscar endereço"));
+
+        enderecoRepository.resetarEnderecoPrincipal(pessoaId);
+
+        novoPrincipal.setPrincipal(true);
+        return mapper.toDto(novoPrincipal);
     }
 }
