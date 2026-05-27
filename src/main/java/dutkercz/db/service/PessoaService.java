@@ -52,8 +52,7 @@ public class PessoaService {
         Pessoa pessoa =pessoaRepository.findById(id)
             .orElseThrow(() ->
                                  new EntityNotFoundException("Pessoa com o id " + id + " não encontrada"));
-        pessoa = mapper.updatePessoaFromDto(updateDto, pessoa);
-        pessoaRepository.save(pessoa);
+        mapper.updatePessoaFromDto(updateDto, pessoa);
         return mapper.toDto(pessoa);
     }
 

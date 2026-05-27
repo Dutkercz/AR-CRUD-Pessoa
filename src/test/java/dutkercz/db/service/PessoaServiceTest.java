@@ -130,13 +130,11 @@ class PessoaServiceTest {
     void shouldUpdatePessoaSuccessfully() {
         PessoaUpdateDto updateDto = new PessoaUpdateDto("Pessoa Um Atulizada");
         when(pessoaRepository.findById(1L)).thenReturn(Optional.of(pessoa1));
-        when(pessoaRepository.save(any(Pessoa.class))).thenReturn(pessoa1);
 
         PessoaResponseDto result = pessoaService.atulizarNomePessoa(1L, updateDto);
         assertNotNull(result);
         assertNotNull(result.enderecos());
         assertEquals(updateDto.nome(), result.nome());
         verify(pessoaRepository, times(1)).findById(1L);
-        verify(pessoaRepository, times(1)).save(any(Pessoa.class));
     }
 }
