@@ -8,12 +8,11 @@ import dutkercz.db.dto.endereco.EnderecoUpdateDto;
 import dutkercz.db.dto.pessoa.PessoaRequestDto;
 import dutkercz.db.dto.pessoa.PessoaResponseDto;
 import dutkercz.db.dto.pessoa.PessoaUpdateDto;
-import org.mapstruct.AfterMapping;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
-@org.mapstruct.Mapper(componentModel = "spring")
-public interface Mapper {
+@Mapper(componentModel = "spring",
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+public interface EntitiesMapper {
 
     @Mapping(target = "cpf", expression = "java(requestDto.cpf().replaceAll(\"[.-]\", \"\"))")
     Pessoa toEntity(PessoaRequestDto requestDto);
@@ -35,4 +34,5 @@ public interface Mapper {
     Endereco toEntity(EnderecoRequestDto requestDto);
     EnderecoResponseDto toDto(Endereco endereco);
     Endereco updateEnderecoFromDto(EnderecoUpdateDto enderecoUpdateDto, @MappingTarget Endereco endereco);
+
 }

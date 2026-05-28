@@ -5,7 +5,7 @@ import dutkercz.db.dto.pessoa.PessoaIdadeResponseDto;
 import dutkercz.db.dto.pessoa.PessoaRequestDto;
 import dutkercz.db.dto.pessoa.PessoaResponseDto;
 import dutkercz.db.dto.pessoa.PessoaUpdateDto;
-import dutkercz.db.mapper.Mapper;
+import dutkercz.db.mapper.EntitiesMapper;
 import dutkercz.db.repository.PessoaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -25,18 +25,18 @@ import static dutkercz.db.service.validations.ValidarEnderecoPrincipalUnico.vali
 public class PessoaService {
 
     private final PessoaRepository pessoaRepository;
-    private final Mapper mapper;
+    private final EntitiesMapper entitiesMapper;
 
     @Transactional
     public PessoaResponseDto cadastrarPessoa(PessoaRequestDto requestDto){
         validarEnderecoPrincipalUnico(requestDto.enderecos());
-        Pessoa pessoa = pessoaRepository.save(mapper.toEntity(requestDto));
-        return mapper.toDto(pessoa);
+        Pessoa pessoa = pessoaRepository.save(entitiesMapper.toEntity(requestDto));
+        return entitiesMapper.toDto(pessoa);
     }
 
     @Transactional(readOnly = true)
     public Page<PessoaResponseDto> listarPessoas(Pageable pageable) {
-        return pessoaRepository.findAll(pageable).map(mapper::toDto);
+        return pessoaRepository.findAll(pageable).map(entitiesMapper::toDto);
     }
 
     @Transactional
@@ -48,8 +48,8 @@ public class PessoaService {
     @Transactional
     public PessoaResponseDto atulizarNomePessoa(Long id, @Valid PessoaUpdateDto updateDto) {
         Pessoa pessoa = buscarPorId(id);
-        mapper.updatePessoaFromDto(updateDto, pessoa);
-        return mapper.toDto(pessoa);
+        entitiesMapper.updatePessoaFromDto(updateDto, pessoa);
+        return entitiesMapper.toDto(pessoa);
     }
 
     public PessoaIdadeResponseDto mostrarMinhaIdade(Long id) {

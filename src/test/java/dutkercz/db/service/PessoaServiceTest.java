@@ -5,8 +5,8 @@ import dutkercz.db.domain.Pessoa;
 import dutkercz.db.dto.pessoa.PessoaRequestDto;
 import dutkercz.db.dto.pessoa.PessoaResponseDto;
 import dutkercz.db.dto.pessoa.PessoaUpdateDto;
-import dutkercz.db.mapper.Mapper;
-import dutkercz.db.mapper.MapperImpl;
+import dutkercz.db.mapper.EntitiesMapper;
+import dutkercz.db.mapper.EntitiesMapperImpl;
 import dutkercz.db.repository.PessoaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +37,7 @@ class PessoaServiceTest {
     private PessoaRepository pessoaRepository;
 
     @Spy
-    private Mapper mapper = new MapperImpl();
+    private EntitiesMapper entitiesMapper = new EntitiesMapperImpl();
 
     @InjectMocks
     private PessoaService pessoaService;

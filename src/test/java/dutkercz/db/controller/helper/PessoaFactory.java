@@ -3,8 +3,8 @@ package dutkercz.db.controller.helper;
 import dutkercz.db.domain.Pessoa;
 import dutkercz.db.dto.endereco.EnderecoRequestDto;
 import dutkercz.db.dto.pessoa.PessoaRequestDto;
-import dutkercz.db.mapper.Mapper;
-import dutkercz.db.mapper.MapperImpl;
+import dutkercz.db.mapper.EntitiesMapper;
+import dutkercz.db.mapper.EntitiesMapperImpl;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class PessoaFactory {
 
-    private static final Mapper mapper = new MapperImpl();
+    private static final EntitiesMapper ENTITIES_MAPPER = new EntitiesMapperImpl();
 
     public static PessoaRequestDto gerarDtoComEnderecoValida() {
         var endereco = new EnderecoRequestDto("rua", "123", "bairro", "cidade",
@@ -44,7 +44,7 @@ public class PessoaFactory {
             PessoaRequestDto pessoaRequestDto =
                 new PessoaRequestDto("Nome" + i, LocalDate.of(1992, 8, 10),
                                      "1234567891" + i, List.of(endereco));
-            pessoas.add(mapper.toEntity(pessoaRequestDto));
+            pessoas.add(ENTITIES_MAPPER.toEntity(pessoaRequestDto));
         }
         return pessoas;
     }

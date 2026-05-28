@@ -3,10 +3,9 @@ package dutkercz.db.controller;
 import dutkercz.db.controller.helper.PessoaFactory;
 import dutkercz.db.dto.pessoa.PessoaRequestDto;
 import dutkercz.db.dto.pessoa.PessoaUpdateDto;
-import dutkercz.db.mapper.Mapper;
+import dutkercz.db.mapper.EntitiesMapper;
 import dutkercz.db.repository.EnderecoRepository;
 import dutkercz.db.repository.PessoaRepository;
-import dutkercz.db.service.EnderecoService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -37,11 +35,8 @@ class PessoaControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
-    private EnderecoService enderecoService;
-
     @Autowired
-    private Mapper mapper;
+    private EntitiesMapper entitiesMapper;
 
     @Autowired
     private JacksonTester<PessoaRequestDto> dtoRequestJson;
@@ -121,7 +116,7 @@ class PessoaControllerTest {
     @DisplayName("Deve atualizar o nome de uma pessoa corretamente")
     void shouldUpdatePessoaSuccessfully() throws Exception {
         PessoaRequestDto requestDto = PessoaFactory.gerarDtoComEnderecoValida();
-        var pessoa = pessoaRepository.save( mapper.toEntity(requestDto));
+        var pessoa = pessoaRepository.save(entitiesMapper.toEntity(requestDto));
         Long id = pessoa.getId();
         PessoaUpdateDto updateDto = new PessoaUpdateDto("Nome atualizado");
 
@@ -137,7 +132,7 @@ class PessoaControllerTest {
     @DisplayName("Deve receber status 400 ao atualizar o nome de uma pessoa incorretamente")
     void shouldNotUpdatePessoaWhenNameIsInvalid() throws Exception {
         PessoaRequestDto requestDto = PessoaFactory.gerarDtoComEnderecoValida();
-        var pessoa = pessoaRepository.save(mapper.toEntity(requestDto));
+        var pessoa = pessoaRepository.save(entitiesMapper.toEntity(requestDto));
         Long id = pessoa.getId();
         PessoaUpdateDto updateDto = new PessoaUpdateDto("");
 
@@ -153,7 +148,7 @@ class PessoaControllerTest {
     void shouldDeletePessoaSuccessfully() throws Exception {
         PessoaRequestDto requestDto = PessoaFactory.gerarDtoComEnderecoValida();
 
-        var pessoa = pessoaRepository.save(mapper.toEntity(requestDto));
+        var pessoa = pessoaRepository.save(entitiesMapper.toEntity(requestDto));
         Long id = pessoa.getId();
 
         mockMvc.perform(delete("/api/pessoas/".concat(id.toString())))
@@ -169,7 +164,7 @@ class PessoaControllerTest {
     @DisplayName("Deve retornar a idade corretamente")
     void shouldDisplayAgeSuccessfully() throws Exception {
         PessoaRequestDto requestDto = PessoaFactory.gerarDtoComEnderecoValida();
-        var pessoa = pessoaRepository.save(mapper.toEntity(requestDto));
+        var pessoa = pessoaRepository.save(entitiesMapper.toEntity(requestDto));
         Long id = pessoa.getId();
         int idadeEsperada = Period.between(requestDto.dataNascimento(), LocalDate.now()).getYears();
 
