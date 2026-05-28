@@ -4,6 +4,7 @@ import dutkercz.db.dto.endereco.EnderecoRequestDto;
 import dutkercz.db.dto.endereco.EnderecoResponseDto;
 import dutkercz.db.dto.endereco.EnderecoUpdateDto;
 import dutkercz.db.service.EnderecoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,8 @@ public class EnderecoController implements dutkercz.db.controller.documentacao.E
     private final EnderecoService enderecoService;
 
     @Override
-    public ResponseEntity<EnderecoResponseDto> adicionarEndereco(Long pessoaId, EnderecoRequestDto enderecoRequestDto) {
+    public ResponseEntity<EnderecoResponseDto> adicionarEndereco(Long pessoaId,
+                                                                 @Valid  EnderecoRequestDto enderecoRequestDto) {
         return ResponseEntity.ok(enderecoService.adicionarEndereco(pessoaId, enderecoRequestDto));
     }
 

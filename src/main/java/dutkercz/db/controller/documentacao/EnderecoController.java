@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +28,7 @@ public interface EnderecoController {
              @ApiResponse(responseCode = "404", description = "Entradas inválidas", content = @Content)})
     @PostMapping
     ResponseEntity<EnderecoResponseDto> adicionarEndereco(@PathVariable Long pessoaId,
-                                                          @RequestBody EnderecoRequestDto enderecoRequestDto);
+                                                          @RequestBody @Valid EnderecoRequestDto enderecoRequestDto);
 
 
     @Operation(summary = "Atualizar endereço",
