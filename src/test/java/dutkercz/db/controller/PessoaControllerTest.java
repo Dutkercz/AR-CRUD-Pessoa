@@ -1,9 +1,10 @@
 package dutkercz.db.controller;
 
-import dutkercz.db.dto.endereco.EnderecoRequestDto;
+import dutkercz.db.controller.helper.PessoaFactory;
 import dutkercz.db.dto.pessoa.PessoaRequestDto;
 import dutkercz.db.dto.pessoa.PessoaUpdateDto;
 import dutkercz.db.mapper.Mapper;
+import dutkercz.db.repository.EnderecoRepository;
 import dutkercz.db.repository.PessoaRepository;
 import dutkercz.db.service.EnderecoService;
 import org.junit.jupiter.api.AfterEach;
@@ -19,9 +20,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Stream;
+import java.time.Period;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -50,6 +52,9 @@ class PessoaControllerTest {
     @Autowired
     private PessoaRepository pessoaRepository;
 
+    @Autowired
+    private EnderecoRepository enderecoRepository;
+
     @AfterEach
     void setUp() {
         pessoaRepository.deleteAll();
@@ -58,44 +63,33 @@ class PessoaControllerTest {
     @Test
     @DisplayName("Deve retornar status 201 quando uma nova pessoa for cadastrada com sucesso")
     void shouldCreatePessoaSuccessfully() throws Exception {
-        PessoaRequestDto requestDto =
-                new PessoaRequestDto("Nome", LocalDate.of(1992, 8, 10),
-                                     "123456789-10", List.of());
-
-        var jsonReturn = mockMvc.perform(
-                        post("/api/pessoas")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(dtoRequestJson.write(requestDto).getJson()))
-                        .andExpect(status().isCreated())
-                        .andExpect(jsonPath("$.nome").value("Nome"))
-                        .andExpect(jsonPath("$.cpf").value("12345678910"))
-                        .andExpect(jsonPath("$.enderecos").isArray());
+        PessoaRequestDto requestDto = PessoaFactory.gerarDtoComEnderecoValida();
+        mockMvc.perform(
+        post("/api/pessoas")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(dtoRequestJson.write(requestDto).getJson()))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.nome").value(requestDto.nome()))
+        .andExpect(jsonPath("$.cpf").value(requestDto.cpf()))
+        .andExpect(jsonPath("$.enderecos").isArray());
     }
 
     @Test
     @DisplayName("Deve retornar status 400 quando forem passadas informações inválidas no cadastro de pessoas")
     void shouldNotCreatePessoaWhenHaveInvalidFields() throws Exception {
-        String invalidName = ""; // nome em branco é inválido
-        PessoaRequestDto requestDto =
-                new PessoaRequestDto(invalidName, LocalDate.of(1992, 8, 10),
-                                     "123456789-10", List.of());
+        PessoaRequestDto requestDto = PessoaFactory.gerarDtoInvalidaComEndereco();
 
-        var jsonReturn = mockMvc.perform(
-                        post("/api/pessoas")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(dtoRequestJson.write(requestDto).getJson()))
-                        .andExpect(status().isBadRequest()).andDo(print());
+        mockMvc.perform(
+        post("/api/pessoas")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(dtoRequestJson.write(requestDto).getJson()))
+        .andExpect(status().isBadRequest()).andDo(print());
     }
 
     @Test
     @DisplayName("Deve retornar status 400 ao marcar dois endereços como principal no cadastro de pessoa")
     void shouldReturnStatusCode400() throws Exception {
-        //vou usar o mesmo endereço, o ponto aqui é verificar se (true) em "principal" gera o erro
-        var endereco = new EnderecoRequestDto("rua", "123", "bairro", "cidade",
-                                              "estado", "99999-000", true);
-        PessoaRequestDto requestDto =
-                new PessoaRequestDto("Nome", LocalDate.of(1992, 8, 10),
-                                     "123456789-10", List.of(endereco, endereco));
+        PessoaRequestDto requestDto = PessoaFactory.gerarDtoComDoisEnderecosInvalidos();
 
         mockMvc.perform(
         post("/api/pessoas")
@@ -107,39 +101,26 @@ class PessoaControllerTest {
     @Test
     @DisplayName("Deve listar a pessoas cadastradas corretamente, junto com os endereços")
     void shouldListPessoasSuccessfully() throws Exception {
-        var endereco = new EnderecoRequestDto("rua", "123", "bairro", "cidade",
-                                              "estado", "99999-000", true);
-        PessoaRequestDto pessoaRequestDto1 =
-                new PessoaRequestDto("Cristian", LocalDate.of(1992, 8, 10),
-                                     "123456789-10", List.of(endereco));
-        PessoaRequestDto pessoaRequestDto2 =
-                new PessoaRequestDto("Tiago", LocalDate.of(1992, 8, 10),
-                                     "123456789-11", List.of(endereco));
-        pessoaRepository.saveAll(Stream.of(pessoaRequestDto1, pessoaRequestDto2)
-                                    .map(mapper::toEntity).toList());
+        var pessoas = pessoaRepository.saveAll(PessoaFactory.gerarListaDePessoasValidas(2));
 
         mockMvc.perform(get("/api/pessoas"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(2))
                //pessoa 1
-                .andExpect(jsonPath("$.content[0].nome").value("Cristian"))
-                .andExpect(jsonPath("$.content[0].cpf").value("12345678910"))
+                .andExpect(jsonPath("$.content[0].nome").value(pessoas.get(0).getNome()))
+                .andExpect(jsonPath("$.content[0].cpf").value(pessoas.get(0).getCpf()))
                 .andExpect(jsonPath("$.content[0].enderecos.length()").value(1))
                //pessoa 2
-               .andExpect(jsonPath("$.content[1].nome").value("Tiago"))
-               .andExpect(jsonPath("$.content[1].cpf").value("12345678911"))
-               .andExpect(jsonPath("$.content[1].enderecos.length()").value(1));
+               .andExpect(jsonPath("$.content[1].nome").value(pessoas.get(1).getNome()))
+               .andExpect(jsonPath("$.content[1].cpf").value(pessoas.get(1).getCpf()))
+               .andExpect(jsonPath("$.content[1].enderecos.length()").value(1))
+               .andDo(print());
     }
 
     @Test
     @DisplayName("Deve atualizar o nome de uma pessoa corretamente")
     void shouldUpdatePessoaSuccessfully() throws Exception {
-        var endereco = new EnderecoRequestDto("rua", "123", "bairro", "cidade",
-                                              "estado", "99999-000", true);
-        PessoaRequestDto requestDto =
-                new PessoaRequestDto("Cristian", LocalDate.of(1992, 8, 10),
-                                     "123456789-10", List.of(endereco));
-
+        PessoaRequestDto requestDto = PessoaFactory.gerarDtoComEnderecoValida();
         var pessoa = pessoaRepository.save( mapper.toEntity(requestDto));
         Long id = pessoa.getId();
         PessoaUpdateDto updateDto = new PessoaUpdateDto("Nome atualizado");
@@ -155,13 +136,8 @@ class PessoaControllerTest {
     @Test
     @DisplayName("Deve receber status 400 ao atualizar o nome de uma pessoa incorretamente")
     void shouldNotUpdatePessoaWhenNameIsInvalid() throws Exception {
-        var endereco = new EnderecoRequestDto("rua", "123", "bairro", "cidade",
-                                              "estado", "99999-000", true);
-        PessoaRequestDto pessoaRequestDto1 =
-                new PessoaRequestDto("Cristian", LocalDate.of(1992, 8, 10),
-                                     "123456789-10", List.of(endereco));
-
-        var pessoa = pessoaRepository.save(mapper.toEntity(pessoaRequestDto1));
+        PessoaRequestDto requestDto = PessoaFactory.gerarDtoComEnderecoValida();
+        var pessoa = pessoaRepository.save(mapper.toEntity(requestDto));
         Long id = pessoa.getId();
         PessoaUpdateDto updateDto = new PessoaUpdateDto("");
 
@@ -169,6 +145,38 @@ class PessoaControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(dtoUpdateJson.write(updateDto).getJson()))
                .andExpect(status().isBadRequest())
+               .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Deve deletar uma Pessoa juntamente com os endereços corretamente")
+    void shouldDeletePessoaSuccessfully() throws Exception {
+        PessoaRequestDto requestDto = PessoaFactory.gerarDtoComEnderecoValida();
+
+        var pessoa = pessoaRepository.save(mapper.toEntity(requestDto));
+        Long id = pessoa.getId();
+
+        mockMvc.perform(delete("/api/pessoas/".concat(id.toString())))
+               .andExpect(status().isNoContent())
+               .andDo(print());
+
+        //usei os asserts para verificar no banco, porque não há retorno nenhum, além do status code
+        assertFalse(pessoaRepository.existsById(id), "O ID não deve existir");
+        assertEquals(0, enderecoRepository.count(), "A contagem de endereços deve ser 0");
+    }
+
+    @Test
+    @DisplayName("Deve retornar a idade corretamente")
+    void shouldDisplayAgeSuccessfully() throws Exception {
+        PessoaRequestDto requestDto = PessoaFactory.gerarDtoComEnderecoValida();
+        var pessoa = pessoaRepository.save(mapper.toEntity(requestDto));
+        Long id = pessoa.getId();
+        int idadeEsperada = Period.between(requestDto.dataNascimento(), LocalDate.now()).getYears();
+
+        mockMvc.perform(get("/api/pessoas/" + id + "/minha-idade"))
+               .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nome").value("Cristian"))
+                .andExpect(jsonPath("$.idade").value(idadeEsperada))
                .andDo(print());
     }
 
