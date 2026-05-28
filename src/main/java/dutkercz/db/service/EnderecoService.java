@@ -53,7 +53,10 @@ public class EnderecoService {
     @Transactional
     public EnderecoResponseDto adicionarEndereco(Long pessoaId, EnderecoRequestDto enderecoRequestDto) {
         Pessoa pessoa = pessoaService.buscarPorId(pessoaId);
-        var endereco = mapper.toEntity(enderecoRequestDto);
+        if (enderecoRequestDto.principal()){
+            enderecoRepository.resetarEnderecoPrincipal(pessoaId);
+        }
+        Endereco endereco = mapper.toEntity(enderecoRequestDto);
         endereco.setPessoa(pessoa);
         return  mapper.toDto(enderecoRepository.save(endereco));
     }
