@@ -26,7 +26,9 @@ public interface PessoaControllerInterface {
     @ApiResponses(value =
             {@ApiResponse(responseCode = "201", description = "Sucesso ao cadastrar", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = PessoaResponseDto.class))}),
-            @ApiResponse(responseCode = "400", description = "Entradas inválidas", content = @Content)})
+            @ApiResponse(responseCode = "400", description = "Entradas inválidas"),
+            @ApiResponse(responseCode = "404", description = "Entradas inválidas")
+            })
     @PostMapping
     ResponseEntity<PessoaResponseDto> cadastrarPessoa(@RequestBody @Valid PessoaRequestDto requestDto,
                                                       UriComponentsBuilder builder);
@@ -43,7 +45,8 @@ public interface PessoaControllerInterface {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Pessoa atualizada com sucesso", content =
                 { @Content(mediaType = "application/json", schema = @Schema(implementation = PessoaResponseDto.class))}),
-            @ApiResponse(responseCode = "404", description = "Erro atualizar")})
+            @ApiResponse(responseCode = "404", description = "Erro atualizar"),
+            @ApiResponse(responseCode = "400", description = "Entradas inválidas")})
     @PatchMapping("/{id}")
     ResponseEntity<PessoaResponseDto> atualizarPessoa(@PathVariable Long id,
                                                       @RequestBody @Valid PessoaUpdateDto updateDto);
@@ -60,7 +63,7 @@ public interface PessoaControllerInterface {
             description = "É possivel recuperar a idade de uma Pessoa com base na data de nascimento cadastrada")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sucesso", content =
-                    { @Content(mediaType = "application/json", schema = @Schema(implementation = PessoaResponseDto.class))}),
+                { @Content(mediaType = "application/json", schema = @Schema(implementation = PessoaResponseDto.class))}),
             @ApiResponse(responseCode = "404", description = "Erro ao recuperar informações")})
     @GetMapping("/{id}/minha-idade")
     ResponseEntity<PessoaIdadeResponseDto> mostrarMinhaIdade(@PathVariable Long id);
