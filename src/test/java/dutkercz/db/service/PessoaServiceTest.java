@@ -50,7 +50,8 @@ class PessoaServiceTest {
     void setUp() {
         requestDto1 = new PessoaRequestDto("Pessoa Um", LocalDate.of(2000, 1, 1),
                                            "12345678910", new ArrayList<>());
-        pessoa1 = new Pessoa(1L, "Pessoa Um", LocalDate.of(2000, 1, 1),
+        pessoa1 = new Pessoa(1L, "Pessoa Um", LocalDate.of(
+                LocalDate.now().minusYears(25L).getYear(), 1, 1),
                              "12345678910", new ArrayList<>());
         Endereco endereco = new Endereco(1L, "rua1", "1", "bairroUm",
                                          "cidadeUm", "estadoUm", "12345000",true, pessoa1);
@@ -136,5 +137,14 @@ class PessoaServiceTest {
         assertNotNull(result.enderecos());
         assertEquals(updateDto.nome(), result.nome());
         verify(pessoaRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void shouldCalculateAgeCorrectly() {
+        when(pessoaRepository.findById(1L)).thenReturn(Optional.of(pessoa1));
+
+        var result = pessoaService.mostrarMinhaIdade(1L);
+        assertEquals(pessoa1.getNome(), result.nome());
+        assertEquals(25, result.idade());
     }
 }
