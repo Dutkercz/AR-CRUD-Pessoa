@@ -14,26 +14,35 @@ public class PessoaFactory {
 
     private static final EntitiesMapper ENTITIES_MAPPER = new EntitiesMapperImpl();
 
-    public static PessoaRequestDto gerarDtoComEnderecoValida() {
+    public static PessoaRequestDto dtoValidoUmEnderecoValido() {
         var endereco = new EnderecoRequestDto("rua", "123", "bairro", "cidade",
                                               "estado", "99999000", true);
         return new PessoaRequestDto("Cristian", LocalDate.of(1992, 8, 10),
                                      "12345678910", List.of(endereco));
     }
 
-    public static PessoaRequestDto gerarDtoInvalidaComEndereco() {
+    public static PessoaRequestDto dtoInvalidoUmEnderecoValido() {
         var endereco = new EnderecoRequestDto("rua", "123", "bairro", "cidade",
                                               "estado", "99999000", true);
         return new PessoaRequestDto("", LocalDate.of(1992, 8, 10),
                                     "12345678910", List.of(endereco));
     }
 
-    public static PessoaRequestDto gerarDtoComDoisEnderecosInvalidos() {
+    public static PessoaRequestDto dtoValidoComDoisEnderecosInvalidos() {
         //vou usar o mesmo endereço 2x, o ponto aqui é verificar se (true) em "principal" gera o erro
         var endereco = new EnderecoRequestDto("rua", "123", "bairro", "cidade",
                                               "estado", "99999000", true);
         return new PessoaRequestDto("Cristian", LocalDate.of(1992, 8, 10),
                                     "12345678910", List.of(endereco, endereco));
+    }
+
+    public static PessoaRequestDto dtoValidoComDoisEnderecosValidos() {
+        var endereco = new EnderecoRequestDto("um", "123", "bairroUm", "cidadeUm",
+                                              "estadoUm", "99999000", true);
+        var endereco2 = new EnderecoRequestDto("rua", "123", "bairro", "cidade",
+                                              "estado", "99999000", false);
+        return new PessoaRequestDto("Cristian", LocalDate.of(1992, 8, 10),
+                                    "12345678910", List.of(endereco, endereco2));
     }
     
     public static List<Pessoa> gerarListaDePessoasValidas(int quantidade){

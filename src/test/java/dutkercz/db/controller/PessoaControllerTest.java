@@ -58,7 +58,7 @@ class PessoaControllerTest {
     @Test
     @DisplayName("Deve retornar status 201 quando uma nova pessoa for cadastrada com sucesso")
     void shouldCreatePessoaSuccessfully() throws Exception {
-        PessoaRequestDto requestDto = PessoaFactory.gerarDtoComEnderecoValida();
+        PessoaRequestDto requestDto = PessoaFactory.dtoValidoUmEnderecoValido();
         mockMvc.perform(
         post("/api/pessoas")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -72,7 +72,7 @@ class PessoaControllerTest {
     @Test
     @DisplayName("Deve retornar status 400 quando forem passadas informações inválidas no cadastro de pessoas")
     void shouldNotCreatePessoaWhenHaveInvalidFields() throws Exception {
-        PessoaRequestDto requestDto = PessoaFactory.gerarDtoInvalidaComEndereco();
+        PessoaRequestDto requestDto = PessoaFactory.dtoInvalidoUmEnderecoValido();
 
         mockMvc.perform(
         post("/api/pessoas")
@@ -84,7 +84,7 @@ class PessoaControllerTest {
     @Test
     @DisplayName("Deve retornar status 400 ao marcar dois endereços como principal no cadastro de pessoa")
     void shouldReturnStatusCode400() throws Exception {
-        PessoaRequestDto requestDto = PessoaFactory.gerarDtoComDoisEnderecosInvalidos();
+        PessoaRequestDto requestDto = PessoaFactory.dtoValidoComDoisEnderecosInvalidos();
 
         mockMvc.perform(
         post("/api/pessoas")
@@ -115,7 +115,7 @@ class PessoaControllerTest {
     @Test
     @DisplayName("Deve atualizar o nome de uma pessoa corretamente")
     void shouldUpdatePessoaSuccessfully() throws Exception {
-        PessoaRequestDto requestDto = PessoaFactory.gerarDtoComEnderecoValida();
+        PessoaRequestDto requestDto = PessoaFactory.dtoValidoUmEnderecoValido();
         var pessoa = pessoaRepository.save(entitiesMapper.toEntity(requestDto));
         Long id = pessoa.getId();
         PessoaUpdateDto updateDto = new PessoaUpdateDto("Nome atualizado");
@@ -131,7 +131,7 @@ class PessoaControllerTest {
     @Test
     @DisplayName("Deve receber status 400 ao atualizar o nome de uma pessoa incorretamente")
     void shouldNotUpdatePessoaWhenNameIsInvalid() throws Exception {
-        PessoaRequestDto requestDto = PessoaFactory.gerarDtoComEnderecoValida();
+        PessoaRequestDto requestDto = PessoaFactory.dtoValidoUmEnderecoValido();
         var pessoa = pessoaRepository.save(entitiesMapper.toEntity(requestDto));
         Long id = pessoa.getId();
         PessoaUpdateDto updateDto = new PessoaUpdateDto("");
@@ -146,7 +146,7 @@ class PessoaControllerTest {
     @Test
     @DisplayName("Deve deletar uma Pessoa juntamente com os endereços corretamente")
     void shouldDeletePessoaSuccessfully() throws Exception {
-        PessoaRequestDto requestDto = PessoaFactory.gerarDtoComEnderecoValida();
+        PessoaRequestDto requestDto = PessoaFactory.dtoValidoUmEnderecoValido();
 
         var pessoa = pessoaRepository.save(entitiesMapper.toEntity(requestDto));
         Long id = pessoa.getId();
@@ -163,7 +163,7 @@ class PessoaControllerTest {
     @Test
     @DisplayName("Deve retornar a idade corretamente")
     void shouldDisplayAgeSuccessfully() throws Exception {
-        PessoaRequestDto requestDto = PessoaFactory.gerarDtoComEnderecoValida();
+        PessoaRequestDto requestDto = PessoaFactory.dtoValidoUmEnderecoValido();
         var pessoa = pessoaRepository.save(entitiesMapper.toEntity(requestDto));
         Long id = pessoa.getId();
         int idadeEsperada = Period.between(requestDto.dataNascimento(), LocalDate.now()).getYears();

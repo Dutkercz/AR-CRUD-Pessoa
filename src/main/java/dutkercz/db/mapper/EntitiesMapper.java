@@ -38,7 +38,7 @@ public interface EntitiesMapper {
     ///utilitario que evitar sobreescrever com strings vazias e nullas quem venham de dtos de update
     @Condition
     default boolean verificaNullos(String value){
-        return value != null && !value.isEmpty();
+        return value != null && !value.trim().isEmpty();
     }
 
 }
