@@ -6,7 +6,7 @@ import dutkercz.db.dto.pessoa.PessoaUpdateDto;
 import dutkercz.db.mapper.EntitiesMapper;
 import dutkercz.db.repository.EnderecoRepository;
 import dutkercz.db.repository.PessoaRepository;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ class PessoaControllerTest {
     @Autowired
     private EnderecoRepository enderecoRepository;
 
-    @AfterEach
+    @BeforeEach
     void setUp() {
         pessoaRepository.deleteAll();
     }
@@ -166,7 +166,7 @@ class PessoaControllerTest {
         PessoaRequestDto requestDto = PessoaFactory.dtoValidoUmEnderecoValido();
         var pessoa = pessoaRepository.save(entitiesMapper.toEntity(requestDto));
         Long id = pessoa.getId();
-        int idadeEsperada = Period.between(requestDto.dataNascimento(), LocalDate.now()).getYears();
+        int idadeEsperada = Period.between(pessoa.getDataNascimento(), LocalDate.now()).getYears();
 
         mockMvc.perform(get("/api/pessoas/" + id + "/minha-idade"))
                .andExpect(status().isOk())
