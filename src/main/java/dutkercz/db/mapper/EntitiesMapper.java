@@ -35,4 +35,10 @@ public interface EntitiesMapper {
     EnderecoResponseDto toDto(Endereco endereco);
     Endereco updateEnderecoFromDto(EnderecoUpdateDto enderecoUpdateDto, @MappingTarget Endereco endereco);
 
+    ///utilitario que evitar sobreescrever com strings vazias e nullas quem venham de dtos de update
+    @Condition
+    default boolean verificaNullos(String value){
+        return value != null && !value.isEmpty();
+    }
+
 }
