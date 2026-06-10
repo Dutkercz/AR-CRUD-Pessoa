@@ -29,7 +29,9 @@ public class PessoaService {
 
     @Transactional
     public PessoaResponseDto cadastrarPessoa(PessoaRequestDto requestDto){
-        if (pessoaRepository.existsByCpf(requestDto.cpf())){
+        //no banco o cpf é salvo sem [.- ]
+        String cpfLimpo = requestDto.cpf().replaceAll("[-. ]", "");
+        if (pessoaRepository.existsByCpf(cpfLimpo)){
             throw new EntityExistsException("O cpf informado já possui cadastro");
         }
         validarEnderecoPrincipalUnico(requestDto.enderecos());
