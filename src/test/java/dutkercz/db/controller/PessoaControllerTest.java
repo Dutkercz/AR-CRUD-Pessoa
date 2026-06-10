@@ -174,5 +174,4 @@ class PessoaControllerTest {
                 .andExpect(jsonPath("$.idade").value(idadeEsperada))
                .andDo(print());
     }
-
 }

@@ -1,7 +1,6 @@
 package dutkercz.db.service;
 
 import dutkercz.db.domain.Pessoa;
-import dutkercz.db.dto.pessoa.PessoaIdadeResponseDto;
 import dutkercz.db.dto.pessoa.PessoaRequestDto;
 import dutkercz.db.dto.pessoa.PessoaResponseDto;
 import dutkercz.db.dto.pessoa.PessoaUpdateDto;
@@ -35,12 +34,13 @@ public class PessoaService {
         }
         validarEnderecoPrincipalUnico(requestDto.enderecos());
         Pessoa pessoa = pessoaRepository.save(entitiesMapper.toEntity(requestDto));
-        return entitiesMapper.toDto(pessoa);
+        return entitiesMapper.toDto(pessoa, calcularIdade(pessoa));
     }
 
     @Transactional(readOnly = true)
     public Page<PessoaResponseDto> listarPessoas(Pageable pageable) {
-        return pessoaRepository.findAll(pageable).map(entitiesMapper::toDto);
+        return pessoaRepository.findAll(pageable)
+                               .map(p -> entitiesMapper.toDto(p, calcularIdade(p)));
     }
 
     @Transactional
@@ -53,15 +53,13 @@ public class PessoaService {
     public PessoaResponseDto atulizarNomePessoa(Long id, @Valid PessoaUpdateDto updateDto) {
         Pessoa pessoa = buscarPorId(id);
         entitiesMapper.updatePessoaFromDto(updateDto, pessoa);
-        return entitiesMapper.toDto(pessoa);
+        return entitiesMapper.toDto(pessoa, calcularIdade(pessoa));
     }
 
-    public PessoaIdadeResponseDto mostrarMinhaIdade(Long id) {
-        Pessoa pessoa = buscarPorId(id);
+    private int calcularIdade(Pessoa pessoa) {
         LocalDate hoje = LocalDate.now();
         LocalDate nascimento = pessoa.getDataNascimento();
-        int idade = Period.between(nascimento, hoje).getYears();
-        return new PessoaIdadeResponseDto(pessoa.getNome(), idade);
+        return Period.between(nascimento, hoje).getYears();
     }
 
     public Pessoa buscarPorId(Long pessoaId) {

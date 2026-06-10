@@ -10,6 +10,7 @@ public record PessoaResponseDto(Long id,
                                 String nome,
                                 @JsonFormat(pattern = "dd/MM/yyyy")LocalDate dataNascimento,
                                 String cpf,
+                                int idade,
                                 List<EnderecoResponseDto> enderecos
                                ) {
 }

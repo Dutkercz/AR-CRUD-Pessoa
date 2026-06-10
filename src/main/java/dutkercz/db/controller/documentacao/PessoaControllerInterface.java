@@ -1,6 +1,5 @@
 package dutkercz.db.controller.documentacao;
 
-import dutkercz.db.dto.pessoa.PessoaIdadeResponseDto;
 import dutkercz.db.dto.pessoa.PessoaRequestDto;
 import dutkercz.db.dto.pessoa.PessoaResponseDto;
 import dutkercz.db.dto.pessoa.PessoaUpdateDto;
@@ -59,12 +58,12 @@ public interface PessoaControllerInterface {
     @DeleteMapping("/{id}")
     ResponseEntity<Void> deletarPessoa(@PathVariable Long id);
 
-    @Operation(summary = "Verificar idade da Pessoa",
-            description = "É possivel recuperar a idade de uma Pessoa com base na data de nascimento cadastrada")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Sucesso", content =
-                { @Content(mediaType = "application/json", schema = @Schema(implementation = PessoaResponseDto.class))}),
-            @ApiResponse(responseCode = "404", description = "Erro ao recuperar informações")})
-    @GetMapping("/{id}/minha-idade")
-    ResponseEntity<PessoaIdadeResponseDto> mostrarMinhaIdade(@PathVariable Long id);
+//    @Operation(summary = "Verificar idade da Pessoa",
+//            description = "É possivel recuperar a idade de uma Pessoa com base na data de nascimento cadastrada")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Sucesso", content =
+//                { @Content(mediaType = "application/json", schema = @Schema(implementation = PessoaResponseDto.class))}),
+//            @ApiResponse(responseCode = "404", description = "Erro ao recuperar informações")})
+//    @GetMapping("/{id}/minha-idade")
+//    ResponseEntity<PessoaIdadeResponseDto> mostrarMinhaIdade(@PathVariable Long id);
 }

@@ -138,13 +138,4 @@ class PessoaServiceTest {
         assertEquals(updateDto.nome(), result.nome());
         verify(pessoaRepository, times(1)).findById(1L);
     }
-
-    @Test
-    void shouldCalculateAgeCorrectly() {
-        when(pessoaRepository.findById(1L)).thenReturn(Optional.of(pessoa1));
-
-        var result = pessoaService.mostrarMinhaIdade(1L);
-        assertEquals(pessoa1.getNome(), result.nome());
-        assertEquals(25, result.idade());
-    }
 }

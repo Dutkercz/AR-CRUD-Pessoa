@@ -28,7 +28,8 @@ public interface EntitiesMapper {
 
     Pessoa updatePessoaFromDto(PessoaUpdateDto updateDto, @MappingTarget Pessoa pessoa);
 
-    PessoaResponseDto toDto(Pessoa pessoa);
+    @Mapping(target = "idade", source = "idade")
+    PessoaResponseDto toDto(Pessoa pessoa, int idade);
 
     ///Utilitario para mapeamento da entidade de composição
     Endereco toEntity(EnderecoRequestDto requestDto);
