@@ -7,6 +7,7 @@ import dutkercz.db.dto.pessoa.PessoaResponseDto;
 import dutkercz.db.dto.pessoa.PessoaUpdateDto;
 import dutkercz.db.mapper.EntitiesMapper;
 import dutkercz.db.repository.PessoaRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,9 @@ public class PessoaService {
 
     @Transactional
     public PessoaResponseDto cadastrarPessoa(PessoaRequestDto requestDto){
+        if (pessoaRepository.existsByCpf(requestDto.cpf())){
+            throw new EntityExistsException("O cpf informado já possui cadastro");
+        }
         validarEnderecoPrincipalUnico(requestDto.enderecos());
         Pessoa pessoa = pessoaRepository.save(entitiesMapper.toEntity(requestDto));
         return entitiesMapper.toDto(pessoa);

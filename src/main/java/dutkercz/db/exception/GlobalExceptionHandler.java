@@ -27,14 +27,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
-    ///Apenas o campo CPF foi marcado com UNIQUE
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> handleDataIntegrityViolation(DataIntegrityViolationException e) {
-        String message = e.getMostSpecificCause().getMessage().contains("cpf") ?
-                         "O cpf informado já possui cadastro"
-                         :
-                         "Erro inesperado";
-        return ResponseEntity.badRequest().body(Map.of("message", message));
+        return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
