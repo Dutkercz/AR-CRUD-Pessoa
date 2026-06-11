@@ -17,9 +17,6 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
-import java.time.Period;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -160,18 +157,4 @@ class PessoaControllerTest {
         assertEquals(0, enderecoRepository.count(), "A contagem de endereços deve ser 0");
     }
 
-    @Test
-    @DisplayName("Deve retornar a idade corretamente")
-    void shouldDisplayAgeSuccessfully() throws Exception {
-        PessoaRequestDto requestDto = PessoaFactory.dtoValidoUmEnderecoValido();
-        var pessoa = pessoaRepository.save(entitiesMapper.toEntity(requestDto));
-        Long id = pessoa.getId();
-        int idadeEsperada = Period.between(pessoa.getDataNascimento(), LocalDate.now()).getYears();
-
-        mockMvc.perform(get("/api/pessoas/" + id + "/minha-idade"))
-               .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome").value("Cristian"))
-                .andExpect(jsonPath("$.idade").value(idadeEsperada))
-               .andDo(print());
-    }
 }

@@ -24,15 +24,14 @@ public interface EnderecoRepository extends JpaRepository<Endereco, Long> {
            """)
     void resetarEnderecoPrincipal(@Param("pessoaId") Long pessoaId);
 
-// havia feito essa Query de update, o problema é que ela não pode retornar a entidade, apenas boolean, int e alguma
-// outra coisa, aí resolveu em parte, porque teria que refazer a consulta ao banco de qualquer maneira
+    @Modifying
+    @Query("""
+            UPDATE Endereco e
+            SET e.principal = true
+            WHERE e.pessoa.id = :pessoaId
+            AND e.id = :enderecoId
+            """)
+    void definirEnderecoPricipal(@Param("enderecoId") Long enderecoId, @Param("pessoaId") Long pessoaId);
 
-//    @Modifying
-//    @Query("""
-//            UPDATE Endereco e
-//            SET e.principal = true
-//            WHERE e.pessoa.id = :pessoaId
-//            AND e.id = :enderecoId
-//            """)
-//    void definirEnderecoPricipal(@Param("enderecoId") Long enderecoId, @Param("pessoaId") Long pessoaId);
+    boolean existsByIdAndPessoaId(Long enderecoId, Long pessoaId);
 }

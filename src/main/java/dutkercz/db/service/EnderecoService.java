@@ -40,12 +40,15 @@ public class EnderecoService {
 
     @Transactional
     public EnderecoResponseDto mudarEnderecoPrincipal(Long pessoaId, Long enderecoId) {
-        Endereco novoPrincipal = enderecoRepository.findByIdAndPessoaId(enderecoId, pessoaId)
-                   .orElseThrow(() -> new EntityNotFoundException("Erro ao buscar endereço"));
-
+        boolean existeEndereco = enderecoRepository.existsByIdAndPessoaId(enderecoId, pessoaId);
+        if (!existeEndereco) {
+            throw new EntityNotFoundException("Erro ao buscar endereço");
+        }
         enderecoRepository.resetarEnderecoPrincipal(pessoaId);
-        novoPrincipal.setPrincipal(true);
-        return entitiesMapper.toDto(novoPrincipal);
+        enderecoRepository.definirEnderecoPricipal(enderecoId, pessoaId);
+
+        return entitiesMapper.toDto(enderecoRepository.findByIdAndPessoaId(enderecoId, pessoaId)
+                         .orElseThrow(() -> new EntityNotFoundException("Erro ao buscar endereço")));
     }
 
     @Transactional
